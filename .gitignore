@@ -1,0 +1,32 @@
+# Credentials — NEVER commit these
+.env
+*.env
+config_local.py
+
+# State files (auto-generated)
+alert_state.json
+concall_state.json
+
+# Local database and downloaded/report archives (persisted in GCS in Cloud Run)
+earnings_engine/earnings.db
+earnings_engine/pdf_archive/*
+!earnings_engine/pdf_archive/.gitkeep
+earnings_engine/report_archive/*
+!earnings_engine/report_archive/.gitkeep
+
+# Logs
+*.txt
+log.txt
+alert_log.txt
+concall_log.txt
+weekly_log.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS files
+.DS_Store
+Thumbs.db

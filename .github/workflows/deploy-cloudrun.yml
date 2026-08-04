@@ -1,0 +1,43 @@
+name: Deploy stock news bots to Cloud Run
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: project-a8446c31-7279-4456-bbf
+  REGION: asia-south1
+  WIF_PROVIDER: projects/39323117264/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions
+  DEPLOYER_SA: github-actions-deployer@project-a8446c31-7279-4456-bbf.iam.gserviceaccount.com
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.DEPLOYER_SA }}
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+      - name: Deploy infrastructure and jobs
+        env:
+          PROJECT_ID: ${{ env.PROJECT_ID }}
+          REGION: ${{ env.REGION }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WEBHOOK_EARNINGS: ${{ secrets.WEBHOOK_EARNINGS }}
+          WEBHOOK_CONCALL: ${{ secrets.WEBHOOK_CONCALL }}
+          WEBHOOK_SMART_ALERTS: ${{ secrets.WEBHOOK_SMART_ALERTS }}
+          WEBHOOK_WEEKLY_WRAP: ${{ secrets.WEBHOOK_WEEKLY_WRAP }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GMAIL_SENDER: ${{ secrets.GMAIL_SENDER }}
+          GMAIL_RECEIVER: ${{ secrets.GMAIL_RECEIVER }}
+        run: bash deploy/deploy.sh
