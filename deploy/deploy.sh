@@ -38,6 +38,17 @@ echo
 
 gcloud config set project "$PROJECT_ID" >/dev/null
 
+# ─── 0. Self-heal: some orgs disable automatic IAM grants for default
+# service agents (secure-by-default policy). Cloud Build then can't read
+# its own upload from the staging bucket. The deployer already holds
+# Project IAM Admin, so it can grant this itself - no manual console step.
+PROJECT_NUMBER="$(gcloud projects describe "$PROJECT_ID" --format='value(projectNumber)')"
+COMPUTE_SA="${PROJECT_NUMBER}-compute@developer.gserviceaccount.com"
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${COMPUTE_SA}" --role="roles/storage.objectViewer" --quiet >/dev/null
+gcloud projects add-iam-policy-binding "$PROJECT_ID" \
+  --member="serviceAccount:${COMPUTE_SA}" --role="roles/logging.logWriter" --quiet >/dev/null
+
 # ─── 1. Enable required APIs ────────────────────────────────────────────────
 echo "-- Enabling APIs --"
 gcloud services enable run.googleapis.com artifactregistry.googleapis.com \
