@@ -11,7 +11,7 @@ permissions:
 env:
   PROJECT_ID: project-a8446c31-7279-4456-bbf
   REGION: asia-south1
-  WIF_PROVIDER: projects/39323117264/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions
+  WIF_PROVIDER: projects/39232117264/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions
   DEPLOYER_SA: github-actions-deployer@project-a8446c31-7279-4456-bbf.iam.gserviceaccount.com
 
 jobs:
